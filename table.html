@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>演習II 座席表</title>
+<style>
+  .container {
+    text-align: center;
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .lectern {
+    margin-bottom: 20px;
+    border: 1px solid #000;
+    padding: 10px;
+    display: inline-block;
+  }
+  .seats {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: calc(130px * 7);
+  }
+  .seat {
+    border: 1px solid #000;
+    margin: 5px;
+    padding: 15px;
+    cursor: pointer;
+    width: 100px;
+  }
+</style>
+</head>
+<body>
+
+<h2>演習II</h2>
+<div class="container">
+  <div class="lectern">教卓</div>
+  <div id="seats" class="seats">
+    <!-- ここに座席番号1から42までのセルを自動生成 -->
+  </div>
+</div>
+
+<script>
+// データファイルから学籍番号を非同期に取得する関数
+async function fetchData() {
+  const response = await fetch('gakuseki.dat'); // データファイルのパスを指定
+  const data = await response.text();
+  const studentNumbers = data.split('\n'); // 改行で分割して配列に変換
+  return studentNumbers;
+}
+
+// 学籍番号を座席表に反映する関数
+async function generateSeats() {
+  const seatsDiv = document.getElementById('seats');
+  const studentNumbers = await fetchData(); // 学籍番号を取得
+
+  for (let i = 0; i < studentNumbers.length; i++) {
+    const seatDiv = document.createElement('div');
+    seatDiv.className = 'seat';
+    seatDiv.textContent = studentNumbers[i]; // 学籍番号をセルに反映
+    seatDiv.onclick = function() {
+      // 座席をクリックしたときに学籍番号をフォームに自動的に入力し、input.phpにリダイレクト
+      window.location.href = 'input.php?student_id=' + encodeURIComponent(this.textContent);
+    };
+
+    seatsDiv.appendChild(seatDiv);
+  }
+}
+
+// 関数を呼び出してセルを生成
+generateSeats();
+</script>
+
+</body>
+</html>
+
+
